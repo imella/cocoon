@@ -35,9 +35,12 @@ module Cocoon
       locals = render_options.delete(:locals)
       method_name = f.respond_to?(:semantic_fields_for) ? :semantic_fields_for : (f.respond_to?(:simple_fields_for) ? :simple_fields_for : :fields_for)
       f.send(method_name, association, new_object, {:child_index => "new_#{association}"}.merge(render_options)) do |builder|
-        #render(association.to_s.singularize + "_fields", :f => builder, :dynamic => true)
-        locals = {:f => builder, :dynamic => true}.merge(locals)
-        render(association.to_s.singularize + "_fields", locals)
+        if locals.nil?
+          render(association.to_s.singularize + "_fields", :f => builder, :dynamic => true)
+        else
+          locals = {:f => builder, :dynamic => true}.merge(locals)
+          render(association.to_s.singularize + "_fields", locals)
+        end
       end
     end
 
